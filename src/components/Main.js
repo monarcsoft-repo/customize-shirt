@@ -8,18 +8,23 @@ import { faAccessibleIcon } from "@fortawesome/free-brands-svg-icons";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 
 library.add(faSpinner, faUser, faAccessibleIcon);
 dom.watch();
 
+import PropTypes from 'prop-types';
+import { withStyles  } from '@material-ui/core/styles';
+
 import MainStickyBar from "./sticky-bar-components/MainStickyBar";
 import ReactCanvas from './main-canvas-components/ReactCanvas';
-import TextPropertiesComponent from './main-canvas-components/TextPropertiesComponent';
+import TextPropertiesMain from "./../components/text-properties-component/TextPropertiesMain";
+
+const styles = theme => ({  });
 
 class Main extends Component{
     
     render(){
+        const { classes } = this.props;
         return(
             <div>
                 <CssBaseline />
@@ -28,16 +33,14 @@ class Main extends Component{
                         container
                         direction="row"
                     >
-                        <Grid item xs={2} sm={2} md={2}>
+                        <Grid item xs={1} sm={1} md={1}>
                             <MainStickyBar />
                         </Grid>
                         <Grid item xs={7} sm={7} md={7}>
                             <ReactCanvas />
                         </Grid>
-                        <Grid item xs={3} sm={3} md={3}>
-                            <Paper>
-                                <TextPropertiesComponent />
-                            </Paper>
+                        <Grid item xs={4} sm={4} md={4}>
+                            <TextPropertiesMain />
                         </Grid>
                     </Grid>
                 </Container>
@@ -46,4 +49,8 @@ class Main extends Component{
     }
 }
 
-export default Main;
+Main.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(Main);

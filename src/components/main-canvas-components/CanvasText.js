@@ -4,7 +4,9 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 
 import { downloadImage } from "./../../redux/action/image";
-
+import { addCurrentFontSize } from "./../../redux/action/currentTextFontSize";
+import { addFontSize } from "./../../redux/action/updatedTextFontSize";
+ 
 class CanvasText extends Component{
 
     constructor(){
@@ -19,13 +21,19 @@ class CanvasText extends Component{
         }
     }
 
+    componentDidMount(){
+        this.props.addFontSize({fontSize:0});
+        this.props.addCurrentFontSize({currentFontSize: 26});
+    }
+
+    componentDidUpdate(){
+        console.log("triggered in canvas text");
+    }
+
 
     handleTextDblClick = (e) => {
-        console.log(Math.floor(this.textRef.fontSize()));
         let stageCanvasElement = this.textRef.parent.parent;
         let layerCanvasElement = this.textRef.parent;
-        /* let stageCanvasElement = this.textRef.parent.parent.parent;
-        let layerCanvasElement = this.textRef.parent.parent; */
 
         this.textRef.hide();
         this.transformerRef.show();
@@ -51,15 +59,6 @@ class CanvasText extends Component{
         textarea.style.width = this.textRef.width() - this.textRef.padding() * 2 + 'px';
         textarea.style.height = this.textRef.height() - this.textRef.padding() * 2 + 5 + 'px';
         textarea.style.fontSize = (this.textRef.fontSize() - 9) + 'px';
-        console.log(textarea.style.msTextSizeAdjust);
-        console.log(textarea.style.height);
-        console.log(textarea.style.width);
-        console.log(this.textRef.height());
-        console.log(this.textRef.width());
-        console.log(this.transformerRef.height());
-        console.log(this.transformerRef.width());
-        /* textarea.style.fontSize = (this.textRef.fontSize() - 7) + 'px';
-        console.log(this.textRef.fontSize()); */
         textarea.style.border = 'none';
         textarea.style.padding = '0px';
         textarea.style.margin = '0px';
@@ -220,11 +219,11 @@ class CanvasText extends Component{
         return(
             <React.Fragment>
                 <Text
-                    text={this.state.draggableText}
+                    text={this.props.textOnShirt}
                     keepRatio={true}
                     drawBorder={true}
-                    fontSize={26}
-                    onDblClick={this.handleTextDblClick}
+                    fontSize={this.props.currentFontSize + this.props.updatedFontSize}
+                    //onDblClick={this.handleTextDblClick}
                     x={this.state.x}
                     y={this.state.y}
                     draggable={true}
@@ -254,7 +253,7 @@ class CanvasText extends Component{
                     boundBoxFunc={(oldBox, newBox)=> {
                     /*  newBox.width = Math.max(30, newBox.width);
                         return newBox; */
-                        if (newBox.width > 200 || newBox.width < this.textRef.fontSize()) {
+                        if (newBox.width > 333 || newBox.width < this.textRef.fontSize()) {
                             //console.log("TCL: CanvasText -> render -> oldBox", oldBox)
                             return oldBox;
                         } else if (newBox.height < this.textRef.fontSize()) {
@@ -287,10 +286,19 @@ class CanvasText extends Component{
     }
 }
 
+const mapStateToProps = (state, props) => {
+    console.log(state);
+    return{
+        textOnShirt: state.textOnShirt, 
+        currentFontSize: state.currentFontSize,
+        updatedFontSize: state.updatedFontSize
+    }
+}
+
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        downloadImage
+        downloadImage, addCurrentFontSize, addFontSize
     },dispatch);
 }
 
-export default connect(null, mapDispatchToProps)(CanvasText);
+export default connect(mapStateToProps, mapDispatchToProps)(CanvasText);
