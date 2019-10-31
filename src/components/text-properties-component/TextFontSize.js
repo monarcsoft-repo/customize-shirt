@@ -9,7 +9,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 
-import { addFontSize } from "./../../redux/action/updatedTextFontSize";
+import { increaseFontSize, reduceFontSize } from "./../../redux/action/updatedTextFontSize";
 
 class TextFontSizeChange extends Component {
 
@@ -17,8 +17,12 @@ class TextFontSizeChange extends Component {
         super();
     }
 
-    addedFontSize = () => {
-        this.props.addFontSize({fontSize:this.props.updatedFontSize + 1});
+    increaseFontSize = () => {
+        this.props.increaseFontSize({fontSize:this.props.updatedFontSize + 1});
+    }
+
+    reduceFontSize = () => {
+        this.props.reduceFontSize({fontSize:this.props.updatedFontSize - 1})
     }
 
     render() {
@@ -30,8 +34,13 @@ class TextFontSizeChange extends Component {
                     </Grid>
                     <Grid container item xs={6}>
                         <ButtonGroup fullWidth aria-label="full width outlined button group">
-                            <Button onClick={this.addedFontSize}><AddIcon /></Button>
-                            <Button><RemoveIcon /></Button>
+                            <Button 
+                                onClick={this.increaseFontSize}><AddIcon />
+                            </Button>
+                            <Button
+                                onClick={this.reduceFontSize}>
+                                <RemoveIcon />
+                            </Button>
                         </ButtonGroup>
                     </Grid>
                     <Grid item xs={2}>
@@ -53,7 +62,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        addFontSize
+        increaseFontSize, reduceFontSize
     },dispatch);
 }
 

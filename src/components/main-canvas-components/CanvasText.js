@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 
 import { downloadImage } from "./../../redux/action/image";
 import { addCurrentFontSize } from "./../../redux/action/currentTextFontSize";
-import { addFontSize } from "./../../redux/action/updatedTextFontSize";
+import { increaseFontSize } from "./../../redux/action/updatedTextFontSize";
  
 class CanvasText extends Component{
 
@@ -22,14 +22,9 @@ class CanvasText extends Component{
     }
 
     componentDidMount(){
-        this.props.addFontSize({fontSize:0});
-        this.props.addCurrentFontSize({currentFontSize: 26});
+        this.props.increaseFontSize({fontSize:0});
+        this.props.addCurrentFontSize({currentFontSize: 21});
     }
-
-    componentDidUpdate(){
-        console.log("triggered in canvas text");
-    }
-
 
     handleTextDblClick = (e) => {
         let stageCanvasElement = this.textRef.parent.parent;
@@ -177,30 +172,31 @@ class CanvasText extends Component{
         /* 
         
             -xBoundaryLeft: calculated based on 29%  of stage(this.textRef.parent.parent.attrs.width) width
-            -xBoundaryLeft: calculated based on xBoundaryLeft + 19% of stage(this.textRef.parent.parent.attrs.width) width
+            -xBoundaryRight: calculated based on xBoundaryLeft + 19% of stage(this.textRef.parent.parent.attrs.width) width
             -yBoundaryTop: calculated based on 17% of stage(this.textRef.parent.parent.attrs.height) height.
             -yBoundaryBottom: calculated based on yBoundaryTop + 19% of stage(this.textRef.parent.parent.attrs.width) height.
 
             -percent is used since stage is responsive(resizable)
         */
-        //console.log(this.textRef);
-        let xBoundaryLeft = this.textRef.parent.parent.attrs.width * .29;
+       
+        let xBoundaryLeft = this.textRef.parent.parent.attrs.width * .28;
         let xBoundaryRight = this.textRef.parent.parent.attrs.width * .19;
         let yBoundaryTop =  this.textRef.parent.parent.attrs.height * .17;
-        let yBoundaryBottom =  this.textRef.parent.parent.attrs.height * .70;
+        let yBoundaryBottom =  this.textRef.parent.parent.attrs.height * .71;
         var boundary = {x: xBoundaryLeft, y: yBoundaryTop, width: xBoundaryRight, height: yBoundaryBottom};
-        
+
         var testRect={
             left: boundary.x, 
             top: boundary.y, 
             right: boundary.x + boundary.width,
             bottom: boundary.y + boundary.height
         };
+        console.log(testRect );
 
         var newX = (pos.x < testRect.left ? testRect.left : pos.x);
         // right edge check
         newX = (newX > testRect.right ? testRect.right : newX);
-        //console.log("TCL: CanvasText -> newX", newX)
+        console.log("TCL: CanvasText -> newX", newX)
         // top edge check
         var newY = (pos.y < testRect.top ? testRect.top : pos.y);
         // bottom edge check
@@ -223,6 +219,7 @@ class CanvasText extends Component{
                     keepRatio={true}
                     drawBorder={true}
                     fontSize={this.props.currentFontSize + this.props.updatedFontSize}
+                    fontFamily="Hamburger Heaven"
                     //onDblClick={this.handleTextDblClick}
                     x={this.state.x}
                     y={this.state.y}
@@ -249,22 +246,26 @@ class CanvasText extends Component{
                 <Transformer
                     node={this.textRef}
                     keepRatio={true}
-                    enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']}
+                    enabledAnchors={false}
                     boundBoxFunc={(oldBox, newBox)=> {
-                    /*  newBox.width = Math.max(30, newBox.width);
-                        return newBox; */
-                        if (newBox.width > 333 || newBox.width < this.textRef.fontSize()) {
-                            //console.log("TCL: CanvasText -> render -> oldBox", oldBox)
+                        newBox.width = Math.max(30, newBox.width);
+                        return newBox;
+                        /* if (newBox.width < 333 || newBox.width < this.textRef.fontSize()) {
                             return oldBox;
                         } else if (newBox.height < this.textRef.fontSize()) {
-                            //console.log("TCL: CanvasText -> render -> oldBox", oldBox)
                             return oldBox;
-                        }
-                        return newBox
+                        } */
                     }}
                     
                     onTransform={() => {
-                        console.log("drag box ");
+                        console.log("on transform text triggered");
+
+                        
+                        //console.log(Math.floor(this.transformerRef.height()));
+ 
+ 
+                        /* let newFontSize = Math.floor(this.transformerRef.height());
+                        this.props.addCurrentFontSize({currentFontSize: newFontSize}) */
                         /* console.log("TCL: CanvasText -> render -> this.textRef.fontSize() ", this.textRef.fontSize())
                         console.log("this.textRef.width() * width ",  this.textRef.width() * this.textRef.scaleX());
                         console.log("this.textRef.width() * height ",  this.textRef.height() * this.textRef.scaleY()); */
@@ -279,6 +280,24 @@ class CanvasText extends Component{
                         } */
                         
                     }}
+                    /* onTransformStart={() => {
+                        let newFontSize = Math.floor(this.transformerRef.height());
+                        this.props.addCurrentFontSize({currentFontSize: newFontSize})
+                    }} */
+                    onTransformEnd={() => {
+                        //console.log("end");
+                        
+                        
+                        /* setTimeout(()=>{
+                            let newFontSize = Math.floor(this.transformerRef.height());
+                            
+                            this.props.addCurrentFontSize({currentFontSize: newFontSize})
+                            console.log("TCL: CanvasText -> newFontSize", newFontSize)
+                            console.log(this.textRef.fontSize());
+                        },1000); */
+                        /* let newFontSize = Math.floor(this.transformerRef.height());
+                        this.props.addCurrentFontSize({currentFontSize: newFontSize}) */
+                    }}
                     ref={node => this.transformerRef = node} 
                 />
             </React.Fragment>
@@ -287,7 +306,7 @@ class CanvasText extends Component{
 }
 
 const mapStateToProps = (state, props) => {
-    console.log(state);
+    //console.log(state);
     return{
         textOnShirt: state.textOnShirt, 
         currentFontSize: state.currentFontSize,
@@ -297,7 +316,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        downloadImage, addCurrentFontSize, addFontSize
+        downloadImage, addCurrentFontSize, increaseFontSize
     },dispatch);
 }
 

@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 
 import TextOnShirt from "./TextOnShirt";
 import TextFontSize from "./TextFontSize";
+import TextFontFamily from "./TextFontFamily";
 import { paper } from "../../styles/styled-components/mainPropertiesComponent";
 
 const styles = theme => ({ paper });
@@ -20,6 +21,7 @@ class TextPropertiesMain extends Component{
                 <Paper className={classes.paper}>
                     <TextOnShirt  />
                     <TextFontSize />
+                    <TextFontFamily />
                 </Paper>
             </React.Fragment>
         );

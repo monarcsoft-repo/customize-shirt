@@ -15,6 +15,7 @@ class TextBorderComponent extends Component{
                         height={600} 
                         stroke="#118AD0" 
                         strokeWidth={2}
+                        listening={false}
                     ></Rect>
                 </Group> 
             </React.Fragment>
